@@ -1,0 +1,72 @@
+Stratascratch 
+
+https://platform.stratascratch.com/coding?questionType=2&company=&topic=&curated_filter=&is_correct_solution=&is_bookmarked=&is_freemium=true&in_depth_solution=&difficulty=&code_type=3&python=&filters=&page=1&page_size=50
+
+/*
+Salaries Differences
+Write a query that calculates the difference between the highest salaries found in the marketing and engineering departments. Output just the absolute difference in salaries.
+*/
+
+SELECT 
+MAX(CASE WHEN d.department = 'marketing' THEN salary END) - MAX(CASE WHEN d.department = 'engineering' THEN salary END) AS salary_diff
+FROM db_employee as e 
+JOIN db_dept as d
+ON e.department_id = d.id
+
+
+/*
+Finding Updated Records
+We have a table with employees and their salaries, however, some of the records are old and contain outdated salary information. Find the current salary of each employee assuming that salaries increase each year. Output their id, first name, last name, department ID, and current salary. Order your list by employee ID in ascending order.
+*/
+
+SELECT id, first_name, last_name, salary, department_id, max(salary) as current_salary
+FROM  ms_employee_salary
+group by id, first_name, last_name, department_id
+order by id asc 
+
+
+/*
+Customer Details
+Find the details of each customer regardless of whether the customer made an order. Output the customer's first name, last name, and the city along with the order details.
+You may have duplicate rows in your results due to a customer ordering several of the same items. Sort records based on the customer's first name and the order details in ascending order.
+*/
+
+select first_name, last_name, city, order_details
+from customers as c
+left join orders as o
+on c.id = o.cust_id
+order by first_name, order_details asc
+
+ 
+/* 
+Number Of Bathrooms And Bedrooms
+Find the average number of bathrooms and bedrooms for each city’s property types. Output the result along with the city name and the property type.
+*/
+
+select city, property_type, avg(bedrooms) as avgerage_bedrooms, avg(bathrooms) as avgerage_bathrooms
+from airbnb_search_details
+group by city, property_type
+
+
+/*
+Popularity of Hack
+Meta/Facebook has developed a new programing language called Hack.To measure the popularity of Hack they ran a survey with their employees. The survey included data on previous programing familiarity as well as the number of years of experience, age, gender and most importantly satisfaction with Hack. Due to an error location data was not collected, but your supervisor demands a report showing average popularity of Hack by office location. Luckily the user IDs of employees completing the surveys were stored.
+Based on the above, find the average popularity of the Hack per office location.
+Output the location along with the average popularity.
+*/
+
+select location, avg(popularity) as avg_popularity
+from facebook_employees as em
+join facebook_hack_survey as su
+on em.id = su.employee_id
+group by location 
+
+
+/*
+Average Salaries
+Compare each employee's salary with the average salary of the corresponding department.
+Output the department, first name, and salary of employees along with the average salary of that department.
+ */
+ 
+select first_name, department, salary, avg(salary) over(partition by department) as average_department_salary 
+from employee
